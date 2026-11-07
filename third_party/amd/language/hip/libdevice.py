@@ -521,3 +521,211 @@ def isfinited(arg0, _semantic=None):
     return core.extern_elementwise("", "", [arg0], {
         (core.dtype("fp64"), ): ("__ocml_isfinite_f64", core.dtype("int32")),
     }, is_pure=True, _semantic=_semantic).to(core.int1, _semantic=_semantic)
+
+
+@core.extern
+def cbrt(arg0, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0], {
+            (core.dtype("fp32"), ): ("__ocml_cbrt_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), ): ("__ocml_cbrt_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def rcbrt(arg0, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0], {
+            (core.dtype("fp32"), ): ("__ocml_rcbrt_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), ): ("__ocml_rcbrt_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def exp10(arg0, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0], {
+            (core.dtype("fp32"), ): ("__ocml_exp10_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), ): ("__ocml_exp10_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def erfcinv(arg0, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0], {
+            (core.dtype("fp32"), ): ("__ocml_erfcinv_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), ): ("__ocml_erfcinv_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def tgamma(arg0, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0], {
+            (core.dtype("fp32"), ): ("__ocml_tgamma_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), ): ("__ocml_tgamma_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def logb(arg0, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0], {
+            (core.dtype("fp32"), ): ("__ocml_logb_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), ): ("__ocml_logb_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def remainder(arg0, arg1, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0, arg1], {
+            (core.dtype("fp32"), core.dtype("fp32")): ("__ocml_remainder_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), core.dtype("fp64")): ("__ocml_remainder_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def rhypot(arg0, arg1, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0, arg1], {
+            (core.dtype("fp32"), core.dtype("fp32")): ("__ocml_rhypot_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), core.dtype("fp64")): ("__ocml_rhypot_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def fdim(arg0, arg1, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0, arg1], {
+            (core.dtype("fp32"), core.dtype("fp32")): ("__ocml_fdim_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), core.dtype("fp64")): ("__ocml_fdim_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def scalbn(arg0, arg1, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0, arg1], {
+            (core.dtype("fp32"), core.dtype("int32")): ("__ocml_scalbn_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), core.dtype("int32")): ("__ocml_scalbn_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def sinpi(arg0, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0], {
+            (core.dtype("fp32"), ): ("__ocml_sinpi_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), ): ("__ocml_sinpi_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def cospi(arg0, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0], {
+            (core.dtype("fp32"), ): ("__ocml_cospi_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), ): ("__ocml_cospi_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def normcdf(arg0, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0], {
+            (core.dtype("fp32"), ): ("__ocml_ncdf_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), ): ("__ocml_ncdf_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def normcdfinv(arg0, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0], {
+            (core.dtype("fp32"), ): ("__ocml_ncdfinv_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), ): ("__ocml_ncdfinv_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def norm3d(arg0, arg1, arg2, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0, arg1, arg2], {
+            (core.dtype("fp32"), core.dtype("fp32"), core.dtype("fp32")): ("__ocml_len3_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), core.dtype("fp64"), core.dtype("fp64")): ("__ocml_len3_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def rnorm3d(arg0, arg1, arg2, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0, arg1, arg2], {
+            (core.dtype("fp32"), core.dtype("fp32"), core.dtype("fp32")): ("__ocml_rlen3_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), core.dtype("fp64"), core.dtype("fp64")): ("__ocml_rlen3_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def norm4d(arg0, arg1, arg2, arg3, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0, arg1, arg2, arg3], {
+            (core.dtype("fp32"), core.dtype("fp32"), core.dtype("fp32"), core.dtype("fp32")):
+            ("__ocml_len4_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), core.dtype("fp64"), core.dtype("fp64"), core.dtype("fp64")):
+            ("__ocml_len4_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def rnorm4d(arg0, arg1, arg2, arg3, _semantic=None):
+    return core.extern_elementwise(
+        "", "", [arg0, arg1, arg2, arg3], {
+            (core.dtype("fp32"), core.dtype("fp32"), core.dtype("fp32"), core.dtype("fp32")):
+            ("__ocml_rlen4_f32", core.dtype("fp32")),
+            (core.dtype("fp64"), core.dtype("fp64"), core.dtype("fp64"), core.dtype("fp64")):
+            ("__ocml_rlen4_f64", core.dtype("fp64")),
+        }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def fast_sinf(arg0, _semantic=None):
+    return core.extern_elementwise("", "", [arg0], {
+        (core.dtype("fp32"), ): ("__ocml_native_sin_f32", core.dtype("fp32")),
+    }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def fast_cosf(arg0, _semantic=None):
+    return core.extern_elementwise("", "", [arg0], {
+        (core.dtype("fp32"), ): ("__ocml_native_cos_f32", core.dtype("fp32")),
+    }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def fast_logf(arg0, _semantic=None):
+    return core.extern_elementwise("", "", [arg0], {
+        (core.dtype("fp32"), ): ("__ocml_native_log_f32", core.dtype("fp32")),
+    }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def fast_log2f(arg0, _semantic=None):
+    return core.extern_elementwise("", "", [arg0], {
+        (core.dtype("fp32"), ): ("__ocml_native_log2_f32", core.dtype("fp32")),
+    }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def fast_log10f(arg0, _semantic=None):
+    return core.extern_elementwise("", "", [arg0], {
+        (core.dtype("fp32"), ): ("__ocml_native_log10_f32", core.dtype("fp32")),
+    }, is_pure=True, _semantic=_semantic)
+
+
+@core.extern
+def fast_exp10f(arg0, _semantic=None):
+    return core.extern_elementwise("", "", [arg0], {
+        (core.dtype("fp32"), ): ("__ocml_native_exp10_f32", core.dtype("fp32")),
+    }, is_pure=True, _semantic=_semantic)

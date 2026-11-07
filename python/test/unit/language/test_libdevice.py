@@ -113,3 +113,71 @@ def test_isinf(device, dtype_str):
     BLOCK_SIZE = 256
     triton_isinf[(triton.cdiv(numel, BLOCK_SIZE), )](x, y, numel, BLOCK_SIZE)
     assert torch.equal(y.cpu(), res)
+
+
+def _uniform(lo, hi):
+    return lambda size, dtype, device: torch.empty(size, dtype=dtype, device=device).uniform_(lo, hi)
+
+
+def _randn(size, dtype, device):
+    return torch.randn(size, dtype=dtype, device=device)
+
+
+def _randint(size, dtype, device):
+    return torch.randint(-20, 20, (size, ), dtype=torch.int32, device=device)
+
+
+# fn name -> (reference evaluated in fp64, one sampler per argument)
+_MATH_CASES = {
+    "cbrt": (lambda x: x.sign() * x.abs().pow(1 / 3), [_randn]),
+    "rcbrt": (lambda x: 1 / (x.sign() * x.abs().pow(1 / 3)), [_randn]),
+    "exp10": (lambda x: torch.pow(10.0, x), [_randn]),
+    "erfcinv": (lambda x: torch.erfinv(1 - x), [_uniform(0.1, 1.9)]),
+    "tgamma": (lambda x: torch.lgamma(x).exp(), [_uniform(0.5, 5.0)]),
+    "logb": (lambda x: torch.frexp(x).exponent.to(x.dtype) - 1, [_randn]),
+    "remainder": (lambda x, y: x - y * torch.round(x / y), [_randn, _uniform(0.5, 2.0)]),
+    "rhypot": (lambda x, y: 1 / torch.hypot(x, y), [_randn, _randn]),
+    "fdim": (lambda x, y: (x - y).clamp(min=0), [_randn, _randn]),
+    "scalbn": (lambda x, n: torch.ldexp(x, n), [_randn, _randint]),
+    "sinpi": (lambda x: torch.sin(torch.pi * x), [_randn]),
+    "cospi": (lambda x: torch.cos(torch.pi * x), [_randn]),
+    "normcdf": (torch.special.ndtr, [_randn]),
+    "normcdfinv": (torch.special.ndtri, [_uniform(0.01, 0.99)]),
+    "norm3d": (lambda x, y, z: (x * x + y * y + z * z).sqrt(), [_randn] * 3),
+    "rnorm3d": (lambda x, y, z: 1 / (x * x + y * y + z * z).sqrt(), [_randn] * 3),
+    "norm4d": (lambda x, y, z, w: (x * x + y * y + z * z + w * w).sqrt(), [_randn] * 4),
+    "rnorm4d": (lambda x, y, z, w: 1 / (x * x + y * y + z * z + w * w).sqrt(), [_randn] * 4),
+}
+
+
+@pytest.mark.parametrize("dtype_str", ["float32", "float64"])
+@pytest.mark.parametrize("libdevice_fn", sorted(_MATH_CASES))
+def test_math(dtype_str, libdevice_fn, device):
+    SIZE = 128
+    dtype = getattr(torch, dtype_str)
+    ref_fn, samplers = _MATH_CASES[libdevice_fn]
+
+    torch.manual_seed(42)
+    args = [sample(SIZE, dtype, device) for sample in samplers]
+    y_exp = torch.empty((SIZE, ), dtype=dtype, device=device)
+    y_ref = ref_fn(*[a.double() if a.is_floating_point() else a for a in args]).to(dtype)
+
+    @triton.jit
+    def kernel(a_p, b_p, c_p, d_p, out_p, fn: tl.constexpr, NARGS: tl.constexpr, SIZE: tl.constexpr):
+        off = tl.arange(0, SIZE)
+        a = tl.load(a_p + off)
+        if NARGS == 1:
+            res = getattr(libdevice, fn)(a)
+        elif NARGS == 2:
+            res = getattr(libdevice, fn)(a, tl.load(b_p + off))
+        elif NARGS == 3:
+            res = getattr(libdevice, fn)(a, tl.load(b_p + off), tl.load(c_p + off))
+        else:
+            res = getattr(libdevice, fn)(a, tl.load(b_p + off), tl.load(c_p + off), tl.load(d_p + off))
+        tl.store(out_p + off, res)
+
+    ptrs = args + [args[0]] * (4 - len(args))
+    kernel[(1, )](*ptrs, y_exp, fn=libdevice_fn, NARGS=len(args), SIZE=SIZE)
+
+    tol = {"float32": 1e-5, "float64": 1e-12}[dtype_str]
+    torch.testing.assert_close(y_exp, y_ref, rtol=tol, atol=tol)
